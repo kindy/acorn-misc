@@ -4,7 +4,8 @@
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "make-bone": "node -r esm acorn-ana.js >acorn-bone.js"
+    "make-class": "node -r esm acorn-ana.js >acorn-bone.js",
+    "make-svg": "node -r esm acorn-ana.js -t dot | dot -Tsvg >acorn-call-graph.svg"
   },
   "devDependencies": {
     "acorn": "^6.1.1",

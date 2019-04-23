@@ -47,7 +47,22 @@ simple(ast, {
 
 });
 
-console.log(`
+let dot = false;
+
+const typeIdx = process.argv.findIndex(x => x === '-t');
+if (typeIdx !== -1) {
+  dot = process.argv[typeIdx + 1] === 'dot';
+}
+
+if (dot) {
+  makeDot(methods);
+} else {
+  makeClass(methods);
+}
+
+
+function makeClass(methods) {
+  console.log(`
 class Parser {
 ${
   methods.map(({name, childs}) => {
@@ -64,3 +79,34 @@ ${
 }
 }
 `);
+
+}
+
+
+/**
+ * ref: https://gist.github.com/tylerneylon/c0cdccdbf2c6a2cb4bdb
+ */
+function makeDot(methods) {
+  console.log(`
+strict digraph {
+  node [shape=box color=\"#FFFFFF\" fontname=\"courier\" fontsize=12];
+  edge [color=\"#CCCCCC\" arrowsize=0.8];
+
+${
+  methods.reduce((memo, {name, childs}) => {
+    childs.forEach(([_, exp]) => {
+      let m = exp.match(/^this\.([^()]+).+$/);
+      if (m) {
+        memo.push(`  ${name} -> ${m[1]}`);
+      }
+    });
+
+    return memo;
+  }, []).join('\n')
+}
+
+}
+
+`);
+
+}
